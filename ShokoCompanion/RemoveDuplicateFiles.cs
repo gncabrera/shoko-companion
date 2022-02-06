@@ -28,8 +28,9 @@ namespace ShokoCompanion
 
             var allVideoDetails = await GetAllVideoDetails();
 
-            dt.Columns.Add("EpisodeIndex", typeof(int));
             dt.Columns.Add("  ", typeof(bool));
+            dt.Columns.Add("EpisodeIndex", typeof(int));
+            dt.Columns.Add("VideoLocalPlaceID", typeof(int));
             dt.Columns.Add("Anime", typeof(string));
             dt.Columns.Add("Ep#", typeof(int));
             dt.Columns.Add("Ep Name", typeof(string));
@@ -43,50 +44,35 @@ namespace ShokoCompanion
                 for (int i = 0; i < details.Count(); i++)
                 {
                     var detail = details[i];
-                    object[] obj;
-                    if (i == 0)
-                    {
-                        obj = new object[] {
-                            episodeIndex,
-                            false, 
-                            episode.AnimeSeriesID.ToString(), 
-                            episode.EpisodeNumber, 
-                            episode.AniDB_EnglishName,
-                            detail.VideoLocal_FileName
-                        };
-                    } else
-                    {
-                        obj = new object[] {
-                            episodeIndex,
-                            false,
-                            "",
-                            null,
-                            "",
-                            detail.VideoLocal_FileName
-                        };
-                    }
-                    dt.Rows.Add(obj);
+                    dt.Rows.Add(BuildRow(i == 0, episodeIndex, episode, detail));
                 }
                 episodeIndex++;
-                // Coloring rows
 
             }
             dataGridView1.DataSource = dt;
             dataGridView1.Columns["EpisodeIndex"].Visible = false;
+            dataGridView1.Columns["VideoLocalPlaceID"].Visible = false;
         }
 
+        private object[] BuildRow(bool showEpisodeName, int episodeIndex, ShokoAnimeEpisode episode, ShokoVideoDetailed detail)
+        {
+            return new object[] {
+                            false,
+                            episodeIndex,
+                            detail.Places[0].VideoLocal_Place_ID,
+                            showEpisodeName ? episode.AnimeSeriesID.ToString() : "",
+                            episode.EpisodeNumber,
+                            showEpisodeName ? episode.AniDB_EnglishName : "",
+                            detail.VideoLocal_FileName
+                        };
+        }
         private void grid1_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
         {
             DataGridViewRow row = dataGridView1.Rows[e.RowIndex];// get you required index
                                                          // check the cell value under your specific column and then you can toggle your colors
 
-            if(row.Cells[0].Value != null && row.Cells[0].Value.GetType() != typeof(DBNull) && Convert.ToInt32(row.Cells[0].Value) % 2 == 0)
+            if(row.Cells["EpisodeIndex"].Value != null && row.Cells["EpisodeIndex"].Value.GetType() != typeof(DBNull) && Convert.ToInt32(row.Cells["EpisodeIndex"].Value) % 2 == 0)
                 row.DefaultCellStyle.BackColor = Color.Green;
-        }
-
-        private void removeSelectedBtn_Click(object sender, EventArgs e)
-        {
-            
         }
 
         private async Task<Dictionary<ShokoAnimeEpisode, List<ShokoVideoDetailed>>> GetAllVideoDetails()
@@ -98,12 +84,32 @@ namespace ShokoCompanion
             {
                 var videoDetailed = await shokoService.GetFilesByGroupAndResolution(ShokoService.USER_ID, episode.AnimeEpisodeID);
                 result.Add(episode, videoDetailed);
-                //result.Add(episode, new List<ShokoVideoDetailed> { new ShokoVideoDetailed { VideoLocal_FileName = "1a" }, new ShokoVideoDetailed { VideoLocal_FileName = "1b" } }); 
+                //result.Add(episode, new List<ShokoVideoDetailed> { new ShokoVideoDetailed { VideoLocalID = 11, VideoLocal_FileName = "1a" }, new ShokoVideoDetailed { VideoLocalID = 12,  VideoLocal_FileName = "1b" } }); 
             }
 
             return result;
         }
 
+        private async void removeSelectedBtn_Click(object sender, EventArgs e)
+        {
+            //TODO: Check Always at least one must be per episode
+
+            List<int> selected = new List<int>();
+            foreach (DataGridViewRow row in dataGridView1.Rows)
+            {
+                bool isSelected = Convert.ToBoolean(row.Cells[0].Value);
+                if (isSelected)
+                {
+                    selected.Add(Convert.ToInt32(row.Cells["VideoLocalPlaceID"].Value));
+                }
+            }
+
+            foreach (var id in selected)
+            {
+                await shokoService.DeletePhysicalFile(id);
+                Console.WriteLine(id);
+            }
+        }
 
 
     }

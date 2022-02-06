@@ -57,7 +57,6 @@ namespace ShokoCompanion.Services
             }
             catch (Exception ex)
             {
-                // need to return ex.message for display.
                 throw ex;
             }
             return result;
@@ -80,7 +79,27 @@ namespace ShokoCompanion.Services
             }
             catch (Exception ex)
             {
-                // need to return ex.message for display.
+                throw ex;
+            }
+            return result;
+        }
+
+        public async Task<List<ShokoVideoDetailed>> DeletePhysicalFile(int videoLocalPlaceID)
+        {
+            var result = new List<ShokoVideoDetailed>();
+            try
+            {
+                using (HttpResponseMessage response = await httpClient.DeleteAsync(new Uri(BASE_URL + $"/v1/File/Physical/{videoLocalPlaceID}")))
+                {
+                    using (HttpContent content = response.Content)
+                    {
+                        // need these to return to Form for display
+                        string resultString = await content.ReadAsStringAsync();
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
                 throw ex;
             }
             return result;
