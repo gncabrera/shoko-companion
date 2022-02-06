@@ -79,7 +79,8 @@ namespace ShokoCompanion
         {
             DataGridViewRow row = dataGridView1.Rows[e.RowIndex];// get you required index
                                                          // check the cell value under your specific column and then you can toggle your colors
-            if(Convert.ToInt32(row.Cells[0].Value) % 2 == 0)
+
+            if(row.Cells[0].Value != null && row.Cells[0].Value.GetType() != typeof(DBNull) && Convert.ToInt32(row.Cells[0].Value) % 2 == 0)
                 row.DefaultCellStyle.BackColor = Color.Green;
         }
 
@@ -95,9 +96,9 @@ namespace ShokoCompanion
             var allEpisodes = await shokoService.GetAllEpisodesWithMultipleFiles(ShokoService.USER_ID, true, true);
             foreach (var episode in allEpisodes)
             {
-                //var videoDetailed = await shokoService.GetFilesByGroupAndResolution(ShokoService.USER_ID, episode.AnimeEpisodeID);
-                //result.Add(episode, videoDetailed);
-                result.Add(episode, new List<ShokoVideoDetailed> { new ShokoVideoDetailed { VideoLocal_FileName = "1a" }, new ShokoVideoDetailed { VideoLocal_FileName = "1b" } }); 
+                var videoDetailed = await shokoService.GetFilesByGroupAndResolution(ShokoService.USER_ID, episode.AnimeEpisodeID);
+                result.Add(episode, videoDetailed);
+                //result.Add(episode, new List<ShokoVideoDetailed> { new ShokoVideoDetailed { VideoLocal_FileName = "1a" }, new ShokoVideoDetailed { VideoLocal_FileName = "1b" } }); 
             }
 
             return result;

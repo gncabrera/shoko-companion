@@ -63,7 +63,7 @@ namespace ShokoCompanion.Services
             return result;
         }
 
-        public async Task<List<ShokoVideoDetailed>> GetFilesByGroupAndResolution(int animeID,int userID)
+        public async Task<List<ShokoVideoDetailed>> GetFilesByGroupAndResolution(int userID,int animeID)
         {
             var result = new List<ShokoVideoDetailed>();
             try
