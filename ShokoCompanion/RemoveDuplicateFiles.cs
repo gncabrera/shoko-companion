@@ -95,7 +95,7 @@ namespace ShokoCompanion
 
             var episodeIndexCell = row.Cells[ShokoDataGridColumns.EpisodeIndex];
             if(episodeIndexCell.Value != null && episodeIndexCell.Value.GetType() != typeof(DBNull) && Convert.ToInt32(episodeIndexCell.Value) % 2 == 0)
-                row.DefaultCellStyle.BackColor = Color.Green;
+                row.DefaultCellStyle.BackColor = Color.FromArgb(unchecked((int)0xFFFEF8D7));
         }
 
         private async Task<Dictionary<ShokoAnimeEpisode, List<ShokoVideoDetailed>>> GetAllVideoDetails()
@@ -106,9 +106,9 @@ namespace ShokoCompanion
             foreach (var episode in allEpisodes)
             {
                 // TODO: Make async
-                //var videoDetailed = await shokoService.GetFilesByGroupAndResolution(ShokoService.USER_ID, episode.AnimeEpisodeID);
-                //result.Add(episode, videoDetailed);
-                result.Add(episode, new List<ShokoVideoDetailed> { new ShokoVideoDetailed { VideoLocalID = 11, VideoLocal_FileName = "1a" }, new ShokoVideoDetailed { VideoLocalID = 12,  VideoLocal_FileName = "1b" } }); 
+                var videoDetailed = await shokoService.GetFilesByGroupAndResolution(ShokoService.USER_ID, episode.AnimeEpisodeID);
+                result.Add(episode, videoDetailed);
+                //result.Add(episode, new List<ShokoVideoDetailed> { new ShokoVideoDetailed { VideoLocalID = 11, VideoLocal_FileName = "1a" }, new ShokoVideoDetailed { VideoLocalID = 12,  VideoLocal_FileName = "1b" } }); 
             }
             UpdateTotalItemsLabel();
 
@@ -133,7 +133,7 @@ namespace ShokoCompanion
             //TODO: Check Always at least one must be per episode
             
             var selected = GetSelectedFileIds();
-            MessageBoxResult confirmResult = System.Windows.MessageBox.Show($"Are you sure to delete {selected.Count} items?", "Confirm Deletetion!!", MessageBoxButton.YesNo);
+            MessageBoxResult confirmResult = System.Windows.MessageBox.Show($"Are you sure to delete {selected.Count} items?", "Confirm Deletion!!", MessageBoxButton.YesNo);
 
             if (confirmResult == MessageBoxResult.Yes)
             {
