@@ -36,36 +36,56 @@ namespace ShokoCompanion
             dt.Columns.Add(ShokoDataGridColumns.AnimeName, typeof(string));
             dt.Columns.Add(ShokoDataGridColumns.EpisodeNumber, typeof(int));
             dt.Columns.Add(ShokoDataGridColumns.EpisodeName, typeof(string));
+            dt.Columns.Add(ShokoDataGridColumns.FileVersion, typeof(string));
+            dt.Columns.Add(ShokoDataGridColumns.GroupName, typeof(string));
             dt.Columns.Add(ShokoDataGridColumns.Filename, typeof(string));
 
             var episodeIndex = 0;
-            foreach (var episode in allVideoDetails.Keys.OrderBy(c => c.AnimeSeriesID).ThenBy(c => c.EpisodeNumber))
+            var orderedDetails = allVideoDetails.Keys
+                .OrderBy(c => c.AnimeSeriesID)
+                .ThenBy(c => c.EpisodeNumber);
+
+            foreach (var episode in orderedDetails)
             {
-                var details = allVideoDetails[episode];
+                var details = allVideoDetails[episode].OrderBy(d => d.AniDB_Anime_GroupName).ThenBy(d => d.AniDB_File_FileVersion);
 
                 for (int i = 0; i < details.Count(); i++)
                 {
-                    var detail = details[i];
+                    var detail = details.ElementAt(i);
                     dt.Rows.Add(BuildRow(i == 0, episodeIndex, episode, detail, details));
                 }
                 episodeIndex++;
 
             }
             dataGridView1.DataSource = dt;
+            dataGridView1.Columns[ShokoDataGridColumns.CheckBox].AutoSizeMode = DataGridViewAutoSizeColumnMode.DisplayedCells;
             dataGridView1.Columns[ShokoDataGridColumns.EpisodeIndex].Visible = false;
             dataGridView1.Columns[ShokoDataGridColumns.VideoLocalPlaceID].Visible = false;
+            dataGridView1.Columns[ShokoDataGridColumns.AnimeName].AutoSizeMode = DataGridViewAutoSizeColumnMode.DisplayedCells;
+            dataGridView1.Columns[ShokoDataGridColumns.EpisodeNumber].AutoSizeMode = DataGridViewAutoSizeColumnMode.DisplayedCells;
+            dataGridView1.Columns[ShokoDataGridColumns.EpisodeNumber].HeaderCell.Style.Alignment = DataGridViewContentAlignment.MiddleCenter; ;
+            dataGridView1.Columns[ShokoDataGridColumns.EpisodeNumber].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
+            dataGridView1.Columns[ShokoDataGridColumns.EpisodeName].Width = 200;
+            dataGridView1.Columns[ShokoDataGridColumns.FileVersion].AutoSizeMode = DataGridViewAutoSizeColumnMode.DisplayedCells;
+            dataGridView1.Columns[ShokoDataGridColumns.FileVersion].HeaderCell.Style.Alignment = DataGridViewContentAlignment.MiddleCenter; ;
+            dataGridView1.Columns[ShokoDataGridColumns.FileVersion].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
+            dataGridView1.Columns[ShokoDataGridColumns.GroupName].AutoSizeMode = DataGridViewAutoSizeColumnMode.DisplayedCells;
+            dataGridView1.Columns[ShokoDataGridColumns.Filename].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+
         }
 
-        private object[] BuildRow(bool showEpisodeName, int episodeIndex, ShokoAnimeEpisode episode, ShokoVideoDetailed currentDetail, List<ShokoVideoDetailed> episodeDetails)
+        private object[] BuildRow(bool showEpisodeName, int episodeIndex, ShokoAnimeEpisode episode, ShokoVideoDetailed currentDetail, IEnumerable<ShokoVideoDetailed> episodeDetails)
         {
             return new object[] {
-                            shokoFileRemovalService.IsDeleteCandidate(episode, currentDetail, episodeDetails),
-                            episodeIndex,
-                            currentDetail.Places == null ? 0 : currentDetail.Places[0].VideoLocal_Place_ID,
-                            showEpisodeName ? episode.AnimeSeriesID.ToString() : "",
-                            episode.EpisodeNumber,
-                            showEpisodeName ? episode.AniDB_EnglishName : "",
-                            currentDetail.VideoLocal_FileName
+                            shokoFileRemovalService.IsDeleteCandidate(episode, currentDetail, episodeDetails), // Checkbox
+                            episodeIndex,   //EpisodeIndex
+                            currentDetail.Places == null ? 0 : currentDetail.Places[0].VideoLocal_Place_ID, // VideoLocalPlaceID
+                            showEpisodeName ? episode.AnimeSeriesID.ToString() : "", // AnimeName
+                            episode.EpisodeNumber, // EpisodeNumber
+                            showEpisodeName ? episode.AniDB_EnglishName : "", // EpisodeName
+                            currentDetail.AniDB_File_FileVersion, // FileVersion
+                            currentDetail.AniDB_Anime_GroupName, // GroupName
+                            currentDetail.VideoLocal_FileName // Filename
                         };
         }
         private void grid1_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
@@ -86,13 +106,12 @@ namespace ShokoCompanion
             foreach (var episode in allEpisodes)
             {
                 // TODO: Make async
-                var videoDetailed = await shokoService.GetFilesByGroupAndResolution(ShokoService.USER_ID, episode.AnimeEpisodeID);
-                result.Add(episode, videoDetailed);
-                UpdateTotalItemsLabel();
-                //result.Add(episode, new List<ShokoVideoDetailed> { new ShokoVideoDetailed { VideoLocalID = 11, VideoLocal_FileName = "1a" }, new ShokoVideoDetailed { VideoLocalID = 12,  VideoLocal_FileName = "1b" } }); 
+                //var videoDetailed = await shokoService.GetFilesByGroupAndResolution(ShokoService.USER_ID, episode.AnimeEpisodeID);
+                //result.Add(episode, videoDetailed);
+                result.Add(episode, new List<ShokoVideoDetailed> { new ShokoVideoDetailed { VideoLocalID = 11, VideoLocal_FileName = "1a" }, new ShokoVideoDetailed { VideoLocalID = 12,  VideoLocal_FileName = "1b" } }); 
             }
+            UpdateTotalItemsLabel();
 
-            
             return result;
         }
 

@@ -20,8 +20,10 @@ namespace ShokoCompanion.Services
         public static string EpisodeNumber = "Ep#";
         public static string EpisodeName = "Ep Name";
         public static string Filename = "Filename";
+        public static string GroupName= "Group";
+        public static string FileVersion = "Ver";
 
-        
+
     }
     public class ShokoDataGridColumn
     {

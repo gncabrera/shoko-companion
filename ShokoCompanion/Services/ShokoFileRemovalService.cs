@@ -35,9 +35,9 @@ namespace ShokoCompanion.Services
             }
         }
 
-        internal bool IsDeleteCandidate(ShokoAnimeEpisode episode, ShokoVideoDetailed detail, List<ShokoVideoDetailed> episodeDetails)
+        internal bool IsDeleteCandidate(ShokoAnimeEpisode episode, ShokoVideoDetailed detail, IEnumerable<ShokoVideoDetailed> episodeDetails)
         {
-            if(episodeDetails.Count == 2)
+            if(episodeDetails.Count() == 2)
             {
                 // Delete if: Exist Erai-raws & Subsplease & Current detail is Subsplease
                 var eraiRawsFile = episodeDetails.FirstOrDefault(e => e.AniDB_Anime_GroupName != null && e.AniDB_Anime_GroupName.ToLower() == GROUP_ERAI_RAWS);
@@ -48,8 +48,8 @@ namespace ShokoCompanion.Services
                 }
 
                 // Delete if: Same Group, Different Version and Current detail is lowest version
-                var firstFile = episodeDetails[0];
-                var secondFile = episodeDetails[1];
+                var firstFile = episodeDetails.ElementAt(0);
+                var secondFile = episodeDetails.ElementAt(1);
                 if (firstFile.AniDB_GroupID == secondFile.AniDB_GroupID
                     && firstFile.AniDB_File_FileVersion != secondFile.AniDB_File_FileVersion) {
                     var minVersion = episodeDetails.Min(e => e.AniDB_File_FileVersion);
