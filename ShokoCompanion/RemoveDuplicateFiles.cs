@@ -86,17 +86,18 @@ namespace ShokoCompanion
             foreach (var episode in allEpisodes)
             {
                 // TODO: Make async
-                //var videoDetailed = await shokoService.GetFilesByGroupAndResolution(ShokoService.USER_ID, episode.AnimeEpisodeID);
-                //result.Add(episode, videoDetailed);
-                result.Add(episode, new List<ShokoVideoDetailed> { new ShokoVideoDetailed { VideoLocalID = 11, VideoLocal_FileName = "1a" }, new ShokoVideoDetailed { VideoLocalID = 12,  VideoLocal_FileName = "1b" } }); 
+                var videoDetailed = await shokoService.GetFilesByGroupAndResolution(ShokoService.USER_ID, episode.AnimeEpisodeID);
+                result.Add(episode, videoDetailed);
+                UpdateTotalItemsLabel();
+                //result.Add(episode, new List<ShokoVideoDetailed> { new ShokoVideoDetailed { VideoLocalID = 11, VideoLocal_FileName = "1a" }, new ShokoVideoDetailed { VideoLocalID = 12,  VideoLocal_FileName = "1b" } }); 
             }
 
+            
             return result;
         }
 
-        private async void removeSelectedBtn_Click(object sender, EventArgs e)
+        private List<int> GetSelectedFileIds()
         {
-            //TODO: Check Always at least one must be per episode
             List<int> selected = new List<int>();
             foreach (DataGridViewRow row in dataGridView1.Rows)
             {
@@ -106,14 +107,20 @@ namespace ShokoCompanion
                     selected.Add(Convert.ToInt32(row.Cells[ShokoDataGridColumns.VideoLocalPlaceID].Value));
                 }
             }
-
+            return selected;
+        }
+        private async void removeSelectedBtn_Click(object sender, EventArgs e)
+        {
+            //TODO: Check Always at least one must be per episode
+            
+            var selected = GetSelectedFileIds();
             MessageBoxResult confirmResult = System.Windows.MessageBox.Show($"Are you sure to delete {selected.Count} items?", "Confirm Deletetion!!", MessageBoxButton.YesNo);
 
             if (confirmResult == MessageBoxResult.Yes)
             {
                 foreach (var id in selected)
                 {
-                    //await shokoService.DeletePhysicalFile(id);
+                    await shokoService.DeletePhysicalFile(id);
                     Console.WriteLine(id);
                 }
             }
@@ -128,6 +135,36 @@ namespace ShokoCompanion
                     chk.Value = !_allSelected;
             }
             _allSelected = !_allSelected;
+        }
+
+        private void UpdateTotalItemsLabel()
+        {
+            this.totalItemsLbl.Text = $"{dataGridView1.Rows.Count} items / {GetSelectedFileIds().Count} selected";
+        }
+        private void myDataGrid_OnCellValueChanged(object sender, DataGridViewCellEventArgs e)
+        {
+            if (e.ColumnIndex == ShokoDataGridColumns.CheckBoxIndex && e.RowIndex != -1)
+            {
+                UpdateTotalItemsLabel();
+            }
+        }
+
+        private void myDataGrid_OnCellMouseUp(object sender, DataGridViewCellMouseEventArgs e)
+        {
+            // End of edition on each click on column of checkbox
+            if (e.ColumnIndex == ShokoDataGridColumns.CheckBoxIndex && e.RowIndex != -1)
+            {
+                dataGridView1.EndEdit();
+            }
+        }
+
+        private void myDataGrid_OnCellDoubleClick(object sender, DataGridViewCellEventArgs e)
+        {
+            // End of edition on each click on column of checkbox
+            if (e.ColumnIndex == ShokoDataGridColumns.CheckBoxIndex && e.RowIndex != -1)
+            {
+                dataGridView1.EndEdit();
+            }
         }
     }
 }
