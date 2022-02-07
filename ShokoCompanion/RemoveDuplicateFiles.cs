@@ -8,6 +8,7 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Forms;
 
 namespace ShokoCompanion
@@ -45,7 +46,7 @@ namespace ShokoCompanion
                 for (int i = 0; i < details.Count(); i++)
                 {
                     var detail = details[i];
-                    dt.Rows.Add(BuildRow(i == 0, episodeIndex, episode, detail));
+                    dt.Rows.Add(BuildRow(i == 0, episodeIndex, episode, detail, details));
                 }
                 episodeIndex++;
 
@@ -55,16 +56,16 @@ namespace ShokoCompanion
             dataGridView1.Columns[ShokoDataGridColumns.VideoLocalPlaceID].Visible = false;
         }
 
-        private object[] BuildRow(bool showEpisodeName, int episodeIndex, ShokoAnimeEpisode episode, ShokoVideoDetailed detail)
+        private object[] BuildRow(bool showEpisodeName, int episodeIndex, ShokoAnimeEpisode episode, ShokoVideoDetailed currentDetail, List<ShokoVideoDetailed> episodeDetails)
         {
             return new object[] {
-                            false,
+                            shokoFileRemovalService.IsDeleteCandidate(episode, currentDetail, episodeDetails),
                             episodeIndex,
-                            detail.Places[0].VideoLocal_Place_ID,
+                            currentDetail.Places == null ? 0 : currentDetail.Places[0].VideoLocal_Place_ID,
                             showEpisodeName ? episode.AnimeSeriesID.ToString() : "",
                             episode.EpisodeNumber,
                             showEpisodeName ? episode.AniDB_EnglishName : "",
-                            detail.VideoLocal_FileName
+                            currentDetail.VideoLocal_FileName
                         };
         }
         private void grid1_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
@@ -85,9 +86,9 @@ namespace ShokoCompanion
             foreach (var episode in allEpisodes)
             {
                 // TODO: Make async
-                var videoDetailed = await shokoService.GetFilesByGroupAndResolution(ShokoService.USER_ID, episode.AnimeEpisodeID);
-                result.Add(episode, videoDetailed);
-                //result.Add(episode, new List<ShokoVideoDetailed> { new ShokoVideoDetailed { VideoLocalID = 11, VideoLocal_FileName = "1a" }, new ShokoVideoDetailed { VideoLocalID = 12,  VideoLocal_FileName = "1b" } }); 
+                //var videoDetailed = await shokoService.GetFilesByGroupAndResolution(ShokoService.USER_ID, episode.AnimeEpisodeID);
+                //result.Add(episode, videoDetailed);
+                result.Add(episode, new List<ShokoVideoDetailed> { new ShokoVideoDetailed { VideoLocalID = 11, VideoLocal_FileName = "1a" }, new ShokoVideoDetailed { VideoLocalID = 12,  VideoLocal_FileName = "1b" } }); 
             }
 
             return result;
@@ -96,7 +97,6 @@ namespace ShokoCompanion
         private async void removeSelectedBtn_Click(object sender, EventArgs e)
         {
             //TODO: Check Always at least one must be per episode
-
             List<int> selected = new List<int>();
             foreach (DataGridViewRow row in dataGridView1.Rows)
             {
@@ -107,13 +107,27 @@ namespace ShokoCompanion
                 }
             }
 
-            foreach (var id in selected)
+            MessageBoxResult confirmResult = System.Windows.MessageBox.Show($"Are you sure to delete {selected.Count} items?", "Confirm Deletetion!!", MessageBoxButton.YesNo);
+
+            if (confirmResult == MessageBoxResult.Yes)
             {
-                await shokoService.DeletePhysicalFile(id);
-                Console.WriteLine(id);
+                foreach (var id in selected)
+                {
+                    //await shokoService.DeletePhysicalFile(id);
+                    Console.WriteLine(id);
+                }
             }
         }
 
-
+        private bool _allSelected = false;
+        private void toggleSelectedBtn_Click(object sender, EventArgs e)
+        {
+            foreach (DataGridViewRow row in dataGridView1.Rows)
+            {
+                DataGridViewCheckBoxCell chk = (DataGridViewCheckBoxCell)row.Cells[ShokoDataGridColumns.CheckBoxIndex];
+                    chk.Value = !_allSelected;
+            }
+            _allSelected = !_allSelected;
+        }
     }
 }

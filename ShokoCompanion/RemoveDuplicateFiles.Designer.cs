@@ -35,13 +35,15 @@ namespace ShokoCompanion
             this.removeSelectedBtn = new System.Windows.Forms.Button();
             this.dataGridView1 = new System.Windows.Forms.DataGridView();
             this.panel1 = new System.Windows.Forms.Panel();
+            this.toggleSelectedBtn = new System.Windows.Forms.Button();
+            this.totalItemsLbl = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             this.panel1.SuspendLayout();
             this.SuspendLayout();
             // 
             // loadFilesBtn
             // 
-            this.loadFilesBtn.Location = new System.Drawing.Point(3, 3);
+            this.loadFilesBtn.Location = new System.Drawing.Point(3, 12);
             this.loadFilesBtn.Name = "loadFilesBtn";
             this.loadFilesBtn.Size = new System.Drawing.Size(75, 23);
             this.loadFilesBtn.TabIndex = 0;
@@ -51,7 +53,7 @@ namespace ShokoCompanion
             // 
             // removeSelectedBtn
             // 
-            this.removeSelectedBtn.Location = new System.Drawing.Point(84, 3);
+            this.removeSelectedBtn.Location = new System.Drawing.Point(84, 12);
             this.removeSelectedBtn.Name = "removeSelectedBtn";
             this.removeSelectedBtn.Size = new System.Drawing.Size(111, 23);
             this.removeSelectedBtn.TabIndex = 1;
@@ -71,6 +73,8 @@ namespace ShokoCompanion
             // 
             // panel1
             // 
+            this.panel1.Controls.Add(this.totalItemsLbl);
+            this.panel1.Controls.Add(this.toggleSelectedBtn);
             this.panel1.Controls.Add(this.loadFilesBtn);
             this.panel1.Controls.Add(this.removeSelectedBtn);
             this.panel1.Dock = System.Windows.Forms.DockStyle.Top;
@@ -78,6 +82,24 @@ namespace ShokoCompanion
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(800, 44);
             this.panel1.TabIndex = 3;
+            // 
+            // toggleSelectedBtn
+            // 
+            this.toggleSelectedBtn.Location = new System.Drawing.Point(692, 12);
+            this.toggleSelectedBtn.Name = "toggleSelectedBtn";
+            this.toggleSelectedBtn.Size = new System.Drawing.Size(96, 23);
+            this.toggleSelectedBtn.TabIndex = 2;
+            this.toggleSelectedBtn.Text = "Toggle Selected";
+            this.toggleSelectedBtn.UseVisualStyleBackColor = true;
+            this.toggleSelectedBtn.Click += new System.EventHandler(this.toggleSelectedBtn_Click);
+            // 
+            // totalItemsLbl
+            // 
+            this.totalItemsLbl.AutoSize = true;
+            this.totalItemsLbl.Location = new System.Drawing.Point(651, 17);
+            this.totalItemsLbl.Name = "totalItemsLbl";
+            this.totalItemsLbl.Size = new System.Drawing.Size(0, 13);
+            this.totalItemsLbl.TabIndex = 3;
             // 
             // RemoveDuplicateFiles
             // 
@@ -90,6 +112,7 @@ namespace ShokoCompanion
             this.Text = "RemoveDuplicateFiles";
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).EndInit();
             this.panel1.ResumeLayout(false);
+            this.panel1.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -102,5 +125,7 @@ namespace ShokoCompanion
         private System.Windows.Forms.Button removeSelectedBtn;
         private System.Windows.Forms.DataGridView dataGridView1;
         private Panel panel1;
+        private Button toggleSelectedBtn;
+        private Label totalItemsLbl;
     }
 }
