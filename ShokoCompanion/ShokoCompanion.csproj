@@ -65,6 +65,8 @@
     <Compile Include="RemoveDuplicateFiles.Designer.cs">
       <DependentUpon>RemoveDuplicateFiles.cs</DependentUpon>
     </Compile>
+    <Compile Include="Services\ShokoFileRemovalDataGridService.cs" />
+    <Compile Include="Services\ShokoFileRemovalService.cs" />
     <Compile Include="Services\ShokoService.cs" />
     <EmbeddedResource Include="MainWindow.resx">
       <DependentUpon>MainWindow.cs</DependentUpon>

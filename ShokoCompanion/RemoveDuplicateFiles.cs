@@ -15,8 +15,9 @@ namespace ShokoCompanion
     public partial class RemoveDuplicateFiles : Form
     {
         ShokoService shokoService = ShokoService.Instance;
+        ShokoFileRemovalService shokoFileRemovalService= ShokoFileRemovalService.Instance;
 
-        
+
         public RemoveDuplicateFiles()
         {
             InitializeComponent();
@@ -28,13 +29,13 @@ namespace ShokoCompanion
 
             var allVideoDetails = await GetAllVideoDetails();
 
-            dt.Columns.Add("  ", typeof(bool));
-            dt.Columns.Add("EpisodeIndex", typeof(int));
-            dt.Columns.Add("VideoLocalPlaceID", typeof(int));
-            dt.Columns.Add("Anime", typeof(string));
-            dt.Columns.Add("Ep#", typeof(int));
-            dt.Columns.Add("Ep Name", typeof(string));
-            dt.Columns.Add("File Name", typeof(string));
+            dt.Columns.Add(ShokoDataGridColumns.CheckBox, typeof(bool));
+            dt.Columns.Add(ShokoDataGridColumns.EpisodeIndex, typeof(int));
+            dt.Columns.Add(ShokoDataGridColumns.VideoLocalPlaceID, typeof(int));
+            dt.Columns.Add(ShokoDataGridColumns.AnimeName, typeof(string));
+            dt.Columns.Add(ShokoDataGridColumns.EpisodeNumber, typeof(int));
+            dt.Columns.Add(ShokoDataGridColumns.EpisodeName, typeof(string));
+            dt.Columns.Add(ShokoDataGridColumns.Filename, typeof(string));
 
             var episodeIndex = 0;
             foreach (var episode in allVideoDetails.Keys.OrderBy(c => c.AnimeSeriesID).ThenBy(c => c.EpisodeNumber))
@@ -50,8 +51,8 @@ namespace ShokoCompanion
 
             }
             dataGridView1.DataSource = dt;
-            dataGridView1.Columns["EpisodeIndex"].Visible = false;
-            dataGridView1.Columns["VideoLocalPlaceID"].Visible = false;
+            dataGridView1.Columns[ShokoDataGridColumns.EpisodeIndex].Visible = false;
+            dataGridView1.Columns[ShokoDataGridColumns.VideoLocalPlaceID].Visible = false;
         }
 
         private object[] BuildRow(bool showEpisodeName, int episodeIndex, ShokoAnimeEpisode episode, ShokoVideoDetailed detail)
@@ -71,7 +72,8 @@ namespace ShokoCompanion
             DataGridViewRow row = dataGridView1.Rows[e.RowIndex];// get you required index
                                                          // check the cell value under your specific column and then you can toggle your colors
 
-            if(row.Cells["EpisodeIndex"].Value != null && row.Cells["EpisodeIndex"].Value.GetType() != typeof(DBNull) && Convert.ToInt32(row.Cells["EpisodeIndex"].Value) % 2 == 0)
+            var episodeIndexCell = row.Cells[ShokoDataGridColumns.EpisodeIndex];
+            if(episodeIndexCell.Value != null && episodeIndexCell.Value.GetType() != typeof(DBNull) && Convert.ToInt32(episodeIndexCell.Value) % 2 == 0)
                 row.DefaultCellStyle.BackColor = Color.Green;
         }
 
@@ -82,6 +84,7 @@ namespace ShokoCompanion
             var allEpisodes = await shokoService.GetAllEpisodesWithMultipleFiles(ShokoService.USER_ID, true, true);
             foreach (var episode in allEpisodes)
             {
+                // TODO: Make async
                 var videoDetailed = await shokoService.GetFilesByGroupAndResolution(ShokoService.USER_ID, episode.AnimeEpisodeID);
                 result.Add(episode, videoDetailed);
                 //result.Add(episode, new List<ShokoVideoDetailed> { new ShokoVideoDetailed { VideoLocalID = 11, VideoLocal_FileName = "1a" }, new ShokoVideoDetailed { VideoLocalID = 12,  VideoLocal_FileName = "1b" } }); 
@@ -97,10 +100,10 @@ namespace ShokoCompanion
             List<int> selected = new List<int>();
             foreach (DataGridViewRow row in dataGridView1.Rows)
             {
-                bool isSelected = Convert.ToBoolean(row.Cells[0].Value);
+                bool isSelected = Convert.ToBoolean(row.Cells[ShokoDataGridColumns.CheckBoxIndex].Value);
                 if (isSelected)
                 {
-                    selected.Add(Convert.ToInt32(row.Cells["VideoLocalPlaceID"].Value));
+                    selected.Add(Convert.ToInt32(row.Cells[ShokoDataGridColumns.VideoLocalPlaceID].Value));
                 }
             }
 
