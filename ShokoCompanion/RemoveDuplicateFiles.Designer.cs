@@ -43,11 +43,14 @@ namespace ShokoCompanion
             this.totalItemsLbl = new System.Windows.Forms.Label();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.chkOnlyFinishedSeries = new System.Windows.Forms.CheckBox();
+            this.panel2 = new System.Windows.Forms.Panel();
+            this.lblHint = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             this.panel1.SuspendLayout();
             this.groupBox3.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.groupBox1.SuspendLayout();
+            this.panel2.SuspendLayout();
             this.SuspendLayout();
             // 
             // loadFilesBtn
@@ -76,7 +79,7 @@ namespace ShokoCompanion
             this.dataGridView1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.dataGridView1.Location = new System.Drawing.Point(0, 84);
             this.dataGridView1.Name = "dataGridView1";
-            this.dataGridView1.Size = new System.Drawing.Size(1213, 560);
+            this.dataGridView1.Size = new System.Drawing.Size(1184, 577);
             this.dataGridView1.TabIndex = 2;
             this.dataGridView1.CellFormatting += new System.Windows.Forms.DataGridViewCellFormattingEventHandler(this.grid1_CellFormatting);
             this.dataGridView1.CellMouseDoubleClick += new System.Windows.Forms.DataGridViewCellMouseEventHandler(this.myDataGrid_OnCellDoubleClick);
@@ -91,7 +94,7 @@ namespace ShokoCompanion
             this.panel1.Dock = System.Windows.Forms.DockStyle.Top;
             this.panel1.Location = new System.Drawing.Point(0, 0);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(1213, 84);
+            this.panel1.Size = new System.Drawing.Size(1184, 84);
             this.panel1.TabIndex = 3;
             // 
             // groupBox3
@@ -175,13 +178,35 @@ namespace ShokoCompanion
             this.chkOnlyFinishedSeries.Text = "Only finished series";
             this.chkOnlyFinishedSeries.UseVisualStyleBackColor = true;
             // 
+            // panel2
+            // 
+            this.panel2.Controls.Add(this.lblHint);
+            this.panel2.Dock = System.Windows.Forms.DockStyle.Bottom;
+            this.panel2.Location = new System.Drawing.Point(0, 632);
+            this.panel2.Name = "panel2";
+            this.panel2.Size = new System.Drawing.Size(1184, 29);
+            this.panel2.TabIndex = 4;
+            // 
+            // lblHint
+            // 
+            this.lblHint.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.lblHint.Location = new System.Drawing.Point(803, 7);
+            this.lblHint.Name = "lblHint";
+            this.lblHint.Size = new System.Drawing.Size(369, 13);
+            this.lblHint.TabIndex = 0;
+            this.lblHint.Text = "-";
+            this.lblHint.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.lblHint.UseWaitCursor = true;
+            // 
             // RemoveDuplicateFiles
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1213, 644);
+            this.ClientSize = new System.Drawing.Size(1184, 661);
+            this.Controls.Add(this.panel2);
             this.Controls.Add(this.dataGridView1);
             this.Controls.Add(this.panel1);
+            this.MinimumSize = new System.Drawing.Size(900, 700);
             this.Name = "RemoveDuplicateFiles";
             this.Text = "RemoveDuplicateFiles";
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).EndInit();
@@ -192,6 +217,7 @@ namespace ShokoCompanion
             this.groupBox2.PerformLayout();
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
+            this.panel2.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -212,5 +238,7 @@ namespace ShokoCompanion
         private GroupBox groupBox3;
         private ProgressBar progressBar1;
         private Label lblProgress;
+        private Panel panel2;
+        private Label lblHint;
     }
 }

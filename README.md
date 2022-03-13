@@ -9,8 +9,8 @@ Lil' Shoko Server companion for some niche interactions
 
 ## Remove Duplicates
 [ ] Load Anime Name 
-[ ] Check at least one file per episode must exist always
-[ ] hint: close ShokoDesktop for faster experience
+[x] Check at least one file per episode must exist always
+[x] hint: close ShokoDesktop for faster experience
 [x] add wait 100ms when deleting
 [x] Add Loading... label 
 [x] Change label: 10 episodes, 20 files, 5 selected

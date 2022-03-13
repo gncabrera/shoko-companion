@@ -16,7 +16,7 @@ namespace ShokoCompanion
     public partial class RemoveDuplicateFiles : Form
     {
         ShokoService shokoService = ShokoService.Instance;
-        ShokoFileRemovalService shokoFileRemovalService= ShokoFileRemovalService.Instance;
+        ShokoFileRemovalService shokoFileRemovalService = ShokoFileRemovalService.Instance;
         private Dictionary<ShokoAnimeEpisode, List<ShokoVideoDetailed>> Episodes { get; set; }
 
 
@@ -25,6 +25,7 @@ namespace ShokoCompanion
             InitializeComponent();
             lblProgress.Text = "";
             totalItemsLbl.Text = "0 episodes / 0 items / 0 selected";
+            lblHint.Text = "Hint: Close Shoko Desktop for a faster experience";
             Episodes = new Dictionary<ShokoAnimeEpisode, List<ShokoVideoDetailed>>();
         }
 
@@ -32,7 +33,7 @@ namespace ShokoCompanion
         {
             loadFilesBtn.Enabled = false;
             toggleSelectedBtn.Enabled = false;
-            removeSelectedBtn.Enabled=false;
+            removeSelectedBtn.Enabled = false;
             dataGridView1.Enabled = false;
             chkOnlyFinishedSeries.Enabled = false;
         }
@@ -115,10 +116,10 @@ namespace ShokoCompanion
             // Making Read Only all cells!
             foreach (DataGridViewRow row in dataGridView1.Rows)
             {
-                foreach(DataGridViewCell cell in row.Cells)
+                foreach (DataGridViewCell cell in row.Cells)
                 {
                     if (cell.ColumnIndex != ShokoDataGridColumns.CheckBoxIndex)
-                    cell.ReadOnly = true;
+                        cell.ReadOnly = true;
                 }
             }
 
@@ -145,10 +146,10 @@ namespace ShokoCompanion
         private void grid1_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
         {
             DataGridViewRow row = dataGridView1.Rows[e.RowIndex];// get you required index
-                                                         // check the cell value under your specific column and then you can toggle your colors
+                                                                 // check the cell value under your specific column and then you can toggle your colors
 
             var episodeIndexCell = row.Cells[ShokoDataGridColumns.EpisodeIndex];
-            if(episodeIndexCell.Value != null && episodeIndexCell.Value.GetType() != typeof(DBNull) && Convert.ToInt32(episodeIndexCell.Value) % 2 == 0)
+            if (episodeIndexCell.Value != null && episodeIndexCell.Value.GetType() != typeof(DBNull) && Convert.ToInt32(episodeIndexCell.Value) % 2 == 0)
                 row.DefaultCellStyle.BackColor = Color.FromArgb(unchecked((int)0xFFFEF8D7));
         }
 
@@ -167,15 +168,15 @@ namespace ShokoCompanion
                 var videoDetailed = await shokoService.GetFilesByGroupAndResolution(ShokoService.USER_ID, episode.AnimeEpisodeID);
                 Episodes.Add(episode, videoDetailed);
             }
-            
+
             UpdateProgressBar("Wrapping up...", finalProgressPercentage);
 
             return Episodes;
         }
 
-        private List<int> GetSelectedFileIds()
+        private List<long?> GetSelectedFileIds()
         {
-            List<int> selected = new List<int>();
+            List<long?> selected = new List<long?>();
             foreach (DataGridViewRow row in dataGridView1.Rows)
             {
                 bool isSelected = Convert.ToBoolean(row.Cells[ShokoDataGridColumns.CheckBoxIndex].Value);
@@ -193,28 +194,39 @@ namespace ShokoCompanion
             var selected = GetSelectedFileIds();
             MessageBoxResult confirmResult = System.Windows.MessageBox.Show($"Are you sure to delete {selected.Count} items?", "Confirm Deletion!!", MessageBoxButton.YesNo);
 
-            if (confirmResult == MessageBoxResult.Yes)
+            if (confirmResult == MessageBoxResult.No)
+                return;
+
+            Dictionary<ShokoAnimeEpisode, List<ShokoVideoDetailed>> episodesWithAllFilesSelected = shokoService.GetEpisodesWithAllFilesSelected(selected, Episodes);
+
+            if (episodesWithAllFilesSelected.Keys.Count > 0)
             {
-                LoadingStart();
-                UpdateProgressBar("", 0);
-
-                
-                var progressCounter = 0;
-                foreach (var id in selected)
+                MessageBoxResult confirmResult2 = System.Windows.MessageBox.Show($"There are {episodesWithAllFilesSelected.Keys.Count} episodes with all files to be deleted. Are you sure to delete them?", "Confirm Deletion!!", MessageBoxButton.YesNo);
+                if (confirmResult2 == MessageBoxResult.No)
                 {
-                    progressCounter++;
-                    UpdateProgressBar($"Removing file {progressCounter}/{selected.Count}", progressCounter * 100 / selected.Count);
-
-                    await Task.Delay(500);
-                    await shokoService.DeletePhysicalFile(id);
-                    Console.WriteLine(id);
+                    return;
                 }
-
-                UpdateProgressBar("All files Deleted! Load everything again!", 100);
-                LoadingStop();
             }
 
-            
+            LoadingStart();
+            UpdateProgressBar("", 0);
+
+
+            var progressCounter = 0;
+            foreach (var id in selected)
+            {
+                progressCounter++;
+                UpdateProgressBar($"Removing file {progressCounter}/{selected.Count}", progressCounter * 100 / selected.Count);
+
+                await Task.Delay(500);
+                await shokoService.DeletePhysicalFile(id);
+                Console.WriteLine(id);
+            }
+
+            UpdateProgressBar("All files Deleted! Load everything again!", 100);
+            LoadingStop();
+
+
         }
 
         private bool _allSelected = false;
@@ -223,7 +235,7 @@ namespace ShokoCompanion
             foreach (DataGridViewRow row in dataGridView1.Rows)
             {
                 DataGridViewCheckBoxCell chk = (DataGridViewCheckBoxCell)row.Cells[ShokoDataGridColumns.CheckBoxIndex];
-                    chk.Value = !_allSelected;
+                chk.Value = !_allSelected;
             }
             _allSelected = !_allSelected;
         }

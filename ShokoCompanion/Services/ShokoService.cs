@@ -86,7 +86,7 @@ namespace ShokoCompanion.Services
             return result;
         }
 
-        public async Task<List<ShokoVideoDetailed>> DeletePhysicalFile(int videoLocalPlaceID)
+        public async Task<List<ShokoVideoDetailed>> DeletePhysicalFile(long? videoLocalPlaceID)
         {
             var result = new List<ShokoVideoDetailed>();
             try
@@ -105,6 +105,11 @@ namespace ShokoCompanion.Services
                 throw ex;
             }
             return result;
+        }
+
+        internal Dictionary<ShokoAnimeEpisode, List<ShokoVideoDetailed>> GetEpisodesWithAllFilesSelected(List<long?> selected, Dictionary<ShokoAnimeEpisode, List<ShokoVideoDetailed>> episodes)
+        {
+            return episodes.Where(pair => pair.Value.All(file => selected.Contains(file.Places[0].VideoLocal_Place_ID))).ToDictionary(pair => pair.Key, pair => pair.Value);
         }
     }
 }
