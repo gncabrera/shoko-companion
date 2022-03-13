@@ -1,4 +1,4 @@
-﻿using ShokoCompanion.Models;
+﻿using Shoko.Models.Client;
 using ShokoCompanion.Services;
 using System;
 using System.Collections.Generic;
@@ -17,7 +17,7 @@ namespace ShokoCompanion
     {
         ShokoService shokoService = ShokoService.Instance;
         ShokoFileRemovalService shokoFileRemovalService = ShokoFileRemovalService.Instance;
-        private Dictionary<ShokoAnimeEpisode, List<ShokoVideoDetailed>> Episodes { get; set; }
+        private Dictionary<CL_AnimeEpisode_User, List<CL_VideoDetailed>> Episodes { get; set; }
 
 
         public RemoveDuplicateFiles()
@@ -26,7 +26,7 @@ namespace ShokoCompanion
             lblProgress.Text = "";
             totalItemsLbl.Text = "0 episodes / 0 items / 0 selected";
             lblHint.Text = "Hint: Close Shoko Desktop for a faster experience";
-            Episodes = new Dictionary<ShokoAnimeEpisode, List<ShokoVideoDetailed>>();
+            Episodes = new Dictionary<CL_AnimeEpisode_User, List<CL_VideoDetailed>>();
         }
 
         private void LoadingStart()
@@ -129,7 +129,7 @@ namespace ShokoCompanion
 
         }
 
-        private object[] BuildRow(bool showEpisodeName, int episodeIndex, ShokoAnimeEpisode episode, ShokoVideoDetailed currentDetail, IEnumerable<ShokoVideoDetailed> episodeDetails)
+        private object[] BuildRow(bool showEpisodeName, int episodeIndex, CL_AnimeEpisode_User episode, CL_VideoDetailed currentDetail, IEnumerable<CL_VideoDetailed> episodeDetails)
         {
             return new object[] {
                             shokoFileRemovalService.IsDeleteCandidate(episode, currentDetail, episodeDetails), // Checkbox
@@ -153,11 +153,11 @@ namespace ShokoCompanion
                 row.DefaultCellStyle.BackColor = Color.FromArgb(unchecked((int)0xFFFEF8D7));
         }
 
-        private async Task<Dictionary<ShokoAnimeEpisode, List<ShokoVideoDetailed>>> GetAllVideoDetails(bool onlyFinishedSeries = true, bool ignoreVariations = true)
+        private async Task<Dictionary<CL_AnimeEpisode_User, List<CL_VideoDetailed>>> GetAllVideoDetails(bool onlyFinishedSeries = true, bool ignoreVariations = true)
         {
             var finalProgressPercentage = 99;
             UpdateProgressBar("Loading Video Duplicated Videos...", 0);
-            Episodes = new Dictionary<ShokoAnimeEpisode, List<ShokoVideoDetailed>>();
+            Episodes = new Dictionary<CL_AnimeEpisode_User, List<CL_VideoDetailed>>();
 
             int progressCounter = 0;
             var allEpisodes = await shokoService.GetAllEpisodesWithMultipleFiles(ShokoService.USER_ID, onlyFinishedSeries, ignoreVariations);
@@ -197,7 +197,7 @@ namespace ShokoCompanion
             if (confirmResult == MessageBoxResult.No)
                 return;
 
-            Dictionary<ShokoAnimeEpisode, List<ShokoVideoDetailed>> episodesWithAllFilesSelected = shokoService.GetEpisodesWithAllFilesSelected(selected, Episodes);
+            Dictionary<CL_AnimeEpisode_User, List<CL_VideoDetailed>> episodesWithAllFilesSelected = shokoService.GetEpisodesWithAllFilesSelected(selected, Episodes);
 
             if (episodesWithAllFilesSelected.Keys.Count > 0)
             {

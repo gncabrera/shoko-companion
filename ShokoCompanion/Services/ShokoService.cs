@@ -1,5 +1,5 @@
 ﻿using Newtonsoft.Json;
-using ShokoCompanion.Models;
+using Shoko.Models.Client;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -40,9 +40,9 @@ namespace ShokoCompanion.Services
             }
         }
 
-        public async Task<List<ShokoAnimeEpisode>> GetAllEpisodesWithMultipleFiles(long userID, bool onlyFinishedSeries, bool ignoreVariations)
+        public async Task<List<CL_AnimeEpisode_User>> GetAllEpisodesWithMultipleFiles(long userID, bool onlyFinishedSeries, bool ignoreVariations)
         {
-            var result = new List<ShokoAnimeEpisode>();
+            var result = new List<CL_AnimeEpisode_User>();
             try
             {
                 using (HttpResponseMessage response = await httpClient.GetAsync(new Uri(BASE_URL + $"/v1/Episode/ForMultipleFiles/{userID}/{onlyFinishedSeries}/{ignoreVariations}")))
@@ -51,7 +51,7 @@ namespace ShokoCompanion.Services
                     {
                         // need these to return to Form for display
                         string resultString = await content.ReadAsStringAsync();
-                        result = JsonConvert.DeserializeObject<List<ShokoAnimeEpisode>>(resultString);
+                        result = JsonConvert.DeserializeObject<List<CL_AnimeEpisode_User>>(resultString);
                     }
                 }
             }
@@ -62,9 +62,9 @@ namespace ShokoCompanion.Services
             return result;
         }
 
-        public async Task<List<ShokoVideoDetailed>> GetFilesByGroupAndResolution(long? userID,long? animeID)
+        public async Task<List<CL_VideoDetailed>> GetFilesByGroupAndResolution(long? userID,long? animeID)
         {
-            var result = new List<ShokoVideoDetailed>();
+            var result = new List<CL_VideoDetailed>();
             if(animeID == null || userID == null)
                 return result;
             try
@@ -75,7 +75,7 @@ namespace ShokoCompanion.Services
                     {
                         // need these to return to Form for display
                         string resultString = await content.ReadAsStringAsync();
-                        result = JsonConvert.DeserializeObject<List<ShokoVideoDetailed>>(resultString);
+                        result = JsonConvert.DeserializeObject<List<CL_VideoDetailed>>(resultString);
                     }
                 }
             }
@@ -86,9 +86,9 @@ namespace ShokoCompanion.Services
             return result;
         }
 
-        public async Task<List<ShokoVideoDetailed>> DeletePhysicalFile(long? videoLocalPlaceID)
+        public async Task<List<CL_VideoDetailed>> DeletePhysicalFile(long? videoLocalPlaceID)
         {
-            var result = new List<ShokoVideoDetailed>();
+            var result = new List<CL_VideoDetailed>();
             try
             {
                 using (HttpResponseMessage response = await httpClient.DeleteAsync(new Uri(BASE_URL + $"/v1/File/Physical/{videoLocalPlaceID}")))
@@ -107,7 +107,7 @@ namespace ShokoCompanion.Services
             return result;
         }
 
-        internal Dictionary<ShokoAnimeEpisode, List<ShokoVideoDetailed>> GetEpisodesWithAllFilesSelected(List<long?> selected, Dictionary<ShokoAnimeEpisode, List<ShokoVideoDetailed>> episodes)
+        internal Dictionary<CL_AnimeEpisode_User, List<CL_VideoDetailed>> GetEpisodesWithAllFilesSelected(List<long?> selected, Dictionary<CL_AnimeEpisode_User, List<CL_VideoDetailed>> episodes)
         {
             return episodes.Where(pair => pair.Value.All(file => selected.Contains(file.Places[0].VideoLocal_Place_ID))).ToDictionary(pair => pair.Key, pair => pair.Value);
         }

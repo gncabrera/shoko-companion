@@ -1,4 +1,4 @@
-﻿using ShokoCompanion.Models;
+﻿using Shoko.Models.Client;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -35,7 +35,7 @@ namespace ShokoCompanion.Services
             }
         }
 
-        internal bool IsDeleteCandidate(ShokoAnimeEpisode episode, ShokoVideoDetailed detail, IEnumerable<ShokoVideoDetailed> episodeDetails)
+        internal bool IsDeleteCandidate(CL_AnimeEpisode_User episode, CL_VideoDetailed detail, IEnumerable<CL_VideoDetailed> episodeDetails)
         {
             if(episodeDetails.Count() == 2)
             {
