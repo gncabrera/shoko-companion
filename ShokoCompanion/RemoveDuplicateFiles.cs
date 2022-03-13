@@ -17,12 +17,14 @@ namespace ShokoCompanion
     {
         ShokoService shokoService = ShokoService.Instance;
         ShokoFileRemovalService shokoFileRemovalService= ShokoFileRemovalService.Instance;
+        private Dictionary<ShokoAnimeEpisode, List<ShokoVideoDetailed>> Episodes { get; set; }
 
 
         public RemoveDuplicateFiles()
         {
             InitializeComponent();
             lblProgress.Text = "";
+            Episodes = new Dictionary<ShokoAnimeEpisode, List<ShokoVideoDetailed>>();
         }
 
         private void LoadingStart()
@@ -151,7 +153,7 @@ namespace ShokoCompanion
         {
             var finalProgressPercentage = 99;
             UpdateProgressBar("Loading Video Duplicated Videos...", 0);
-            var result = new Dictionary<ShokoAnimeEpisode, List<ShokoVideoDetailed>>();
+            Episodes = new Dictionary<ShokoAnimeEpisode, List<ShokoVideoDetailed>>();
 
             int progressCounter = 0;
             var allEpisodes = await shokoService.GetAllEpisodesWithMultipleFiles(ShokoService.USER_ID, onlyFinishedSeries, ignoreVariations);
@@ -160,12 +162,12 @@ namespace ShokoCompanion
                 progressCounter++;
                 UpdateProgressBar($"Loading Video Details {progressCounter}/{allEpisodes.Count}", progressCounter * finalProgressPercentage / allEpisodes.Count);
                 var videoDetailed = await shokoService.GetFilesByGroupAndResolution(ShokoService.USER_ID, episode.AnimeEpisodeID);
-                result.Add(episode, videoDetailed);
+                Episodes.Add(episode, videoDetailed);
             }
             
             UpdateProgressBar("Wrapping up...", finalProgressPercentage);
 
-            return result;
+            return Episodes;
         }
 
         private List<int> GetSelectedFileIds()
@@ -223,8 +225,25 @@ namespace ShokoCompanion
 
         private void UpdateTotalItemsLabel()
         {
-            this.totalItemsLbl.Text = $"{dataGridView1.Rows.Count} items / {GetSelectedFileIds().Count} selected";
+            this.totalItemsLbl.Text = $"{Episodes.Keys.Count} episodes / {dataGridView1.Rows.Count} items / {GetSelectedFileIds().Count} selected";
         }
-       
+
+        private void myDataGrid_OnCellValueChanged(object sender, DataGridViewCellEventArgs e)
+        {
+            if (e.ColumnIndex == ShokoDataGridColumns.CheckBoxIndex && e.RowIndex != -1)
+            {
+                UpdateTotalItemsLabel();
+            }
+        }
+
+        private void myDataGrid_OnCellMouseUp(object sender, DataGridViewCellMouseEventArgs e)
+        {
+            // End of edition on each click on column of checkbox
+            if (e.ColumnIndex == ShokoDataGridColumns.CheckBoxIndex && e.RowIndex != -1)
+            {
+                dataGridView1.EndEdit();
+            }
+        }
+
     }
 }
