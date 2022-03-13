@@ -93,6 +93,8 @@ namespace ShokoCompanion
 
             dataGridView1.AllowUserToAddRows = false;
             dataGridView1.AllowUserToDeleteRows = false;
+            dataGridView1.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
+            dataGridView1.MultiSelect = false;
 
             dataGridView1.DataSource = dt;
             dataGridView1.Columns[ShokoDataGridColumns.CheckBox].AutoSizeMode = DataGridViewAutoSizeColumnMode.DisplayedCells;
@@ -246,6 +248,17 @@ namespace ShokoCompanion
             {
                 dataGridView1.EndEdit();
             }
+        }
+
+        private void myDataGrid_OnCellDoubleClick(object sender, DataGridViewCellMouseEventArgs e)
+        {
+            // Toggle checkbox on double click
+            DataGridViewRow row = dataGridView1.Rows[e.RowIndex];
+            DataGridViewCheckBoxCell chk = (DataGridViewCheckBoxCell)row.Cells[ShokoDataGridColumns.CheckBoxIndex];
+            chk.Value = !Convert.ToBoolean(chk.Value);
+
+            row.Cells[ShokoDataGridColumns.CheckBoxIndex].Selected = !row.Cells[ShokoDataGridColumns.CheckBoxIndex].Selected;
+            UpdateTotalItemsLabel();
         }
 
     }
