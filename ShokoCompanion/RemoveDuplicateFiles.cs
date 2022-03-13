@@ -87,7 +87,10 @@ namespace ShokoCompanion
                 episodeIndex++;
 
             }
+
             dataGridView1.AllowUserToAddRows = false;
+            dataGridView1.AllowUserToDeleteRows = false;
+
             dataGridView1.DataSource = dt;
             dataGridView1.Columns[ShokoDataGridColumns.CheckBox].AutoSizeMode = DataGridViewAutoSizeColumnMode.DisplayedCells;
             dataGridView1.Columns[ShokoDataGridColumns.EpisodeIndex].Visible = false;
@@ -102,6 +105,17 @@ namespace ShokoCompanion
             dataGridView1.Columns[ShokoDataGridColumns.FileVersion].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
             dataGridView1.Columns[ShokoDataGridColumns.GroupName].AutoSizeMode = DataGridViewAutoSizeColumnMode.DisplayedCells;
             dataGridView1.Columns[ShokoDataGridColumns.Filename].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+
+
+            // Making Read Only all cells!
+            foreach (DataGridViewRow row in dataGridView1.Rows)
+            {
+                foreach(DataGridViewCell cell in row.Cells)
+                {
+                    if (cell.ColumnIndex != ShokoDataGridColumns.CheckBoxIndex)
+                    cell.ReadOnly = true;
+                }
+            }
 
             UpdateTotalItemsLabel();
             LoadingStop();
@@ -170,18 +184,30 @@ namespace ShokoCompanion
         private async void removeSelectedBtn_Click(object sender, EventArgs e)
         {
             //TODO: Check Always at least one must be per episode
-            
+
             var selected = GetSelectedFileIds();
             MessageBoxResult confirmResult = System.Windows.MessageBox.Show($"Are you sure to delete {selected.Count} items?", "Confirm Deletion!!", MessageBoxButton.YesNo);
 
             if (confirmResult == MessageBoxResult.Yes)
             {
+                LoadingStart();
+                UpdateProgressBar("", 0);
+
+                
+                var progressCounter = 0;
                 foreach (var id in selected)
                 {
+                    progressCounter++;
+                    UpdateProgressBar($"Removing file {progressCounter}/{selected.Count}", progressCounter * 100 / selected.Count);
                     await shokoService.DeletePhysicalFile(id);
                     Console.WriteLine(id);
                 }
+
+                UpdateProgressBar("All files Deleted! Load everything again!", 100);
+                LoadingStop();
             }
+
+            
         }
 
         private bool _allSelected = false;
@@ -199,30 +225,6 @@ namespace ShokoCompanion
         {
             this.totalItemsLbl.Text = $"{dataGridView1.Rows.Count} items / {GetSelectedFileIds().Count} selected";
         }
-        private void myDataGrid_OnCellValueChanged(object sender, DataGridViewCellEventArgs e)
-        {
-            if (e.ColumnIndex == ShokoDataGridColumns.CheckBoxIndex && e.RowIndex != -1)
-            {
-                UpdateTotalItemsLabel();
-            }
-        }
-
-        private void myDataGrid_OnCellMouseUp(object sender, DataGridViewCellMouseEventArgs e)
-        {
-            // End of edition on each click on column of checkbox
-            if (e.ColumnIndex == ShokoDataGridColumns.CheckBoxIndex && e.RowIndex != -1)
-            {
-                dataGridView1.EndEdit();
-            }
-        }
-
-        private void myDataGrid_OnCellDoubleClick(object sender, DataGridViewCellEventArgs e)
-        {
-            // End of edition on each click on column of checkbox
-            if (e.ColumnIndex == ShokoDataGridColumns.CheckBoxIndex && e.RowIndex != -1)
-            {
-                dataGridView1.EndEdit();
-            }
-        }
+       
     }
 }
