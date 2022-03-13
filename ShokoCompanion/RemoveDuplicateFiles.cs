@@ -30,6 +30,7 @@ namespace ShokoCompanion
             toggleSelectedBtn.Enabled = false;
             removeSelectedBtn.Enabled=false;
             dataGridView1.Enabled = false;
+            chkOnlyFinishedSeries.Enabled = false;
         }
 
         private void LoadingStop()
@@ -38,6 +39,7 @@ namespace ShokoCompanion
             toggleSelectedBtn.Enabled = true;
             removeSelectedBtn.Enabled = true;
             dataGridView1.Enabled = true;
+            chkOnlyFinishedSeries.Enabled = true;
         }
 
         private async void loadFilesBtn_Click(object sender, EventArgs e)
@@ -45,7 +47,7 @@ namespace ShokoCompanion
             LoadingStart();
             DataTable dt = new DataTable();
 
-            var allVideoDetails = await GetAllVideoDetails();
+            var allVideoDetails = await GetAllVideoDetails(chkOnlyFinishedSeries.Checked);
 
             dt.Columns.Add(ShokoDataGridColumns.CheckBox, typeof(bool));
             dt.Columns.Add(ShokoDataGridColumns.EpisodeIndex, typeof(int));
@@ -117,11 +119,11 @@ namespace ShokoCompanion
                 row.DefaultCellStyle.BackColor = Color.FromArgb(unchecked((int)0xFFFEF8D7));
         }
 
-        private async Task<Dictionary<ShokoAnimeEpisode, List<ShokoVideoDetailed>>> GetAllVideoDetails()
+        private async Task<Dictionary<ShokoAnimeEpisode, List<ShokoVideoDetailed>>> GetAllVideoDetails(bool onlyFinishedSeries = true, bool ignoreVariations = true)
         {
             var result = new Dictionary<ShokoAnimeEpisode, List<ShokoVideoDetailed>>();
 
-            var allEpisodes = await shokoService.GetAllEpisodesWithMultipleFiles(ShokoService.USER_ID, true, true);
+            var allEpisodes = await shokoService.GetAllEpisodesWithMultipleFiles(ShokoService.USER_ID, onlyFinishedSeries, ignoreVariations);
             foreach (var episode in allEpisodes)
             {
                 // TODO: Make async

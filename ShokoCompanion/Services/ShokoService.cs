@@ -62,9 +62,11 @@ namespace ShokoCompanion.Services
             return result;
         }
 
-        public async Task<List<ShokoVideoDetailed>> GetFilesByGroupAndResolution(long userID,long animeID)
+        public async Task<List<ShokoVideoDetailed>> GetFilesByGroupAndResolution(long? userID,long? animeID)
         {
             var result = new List<ShokoVideoDetailed>();
+            if(animeID == null || userID == null)
+                return result;
             try
             {
                 using (HttpResponseMessage response = await httpClient.GetAsync(new Uri(BASE_URL + $"/v1/File/Detailed/{animeID}/{userID}")))
