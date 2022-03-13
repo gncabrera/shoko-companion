@@ -10,27 +10,27 @@ namespace ShokoCompanion.Models
     {
         public DateTime DateTimeUpdated { get; set; }
         public DateTime DateTimeCreated { get; set; }
-        public int AniDB_EpisodeID { get; set; }
-        public int EpisodeNumber { get; set; }
+        public long AniDB_EpisodeID { get; set; }
+        public long EpisodeNumber { get; set; }
         public string EpisodeNameRomaji { get; set; }
         public string EpisodeNameEnglish { get; set; }
         public string Description { get; set; }
-        public int EpisodeType { get; set; }
-        public int LocalFileCount { get; set; }
-        public int UnwatchedEpCountSeries { get; set; }
-        public int AniDB_LengthSeconds { get; set; }
+        public long EpisodeType { get; set; }
+        public long LocalFileCount { get; set; }
+        public long UnwatchedEpCountSeries { get; set; }
+        public long AniDB_LengthSeconds { get; set; }
         public string AniDB_Rating { get; set; }
         public string AniDB_Votes { get; set; }
         public string AniDB_RomajiName { get; set; }
         public string AniDB_EnglishName { get; set; }
         public DateTime AniDB_AirDate { get; set; }
-        public int AnimeEpisode_UserID { get; set; }
-        public int JMMUserID { get; set; }
-        public int AnimeEpisodeID { get; set; }
-        public int AnimeSeriesID { get; set; }
+        public long AnimeEpisode_UserID { get; set; }
+        public long JMMUserID { get; set; }
+        public long AnimeEpisodeID { get; set; }
+        public long AnimeSeriesID { get; set; }
         public object WatchedDate { get; set; }
-        public int PlayedCount { get; set; }
-        public int WatchedCount { get; set; }
-        public int StoppedCount { get; set; }
+        public long PlayedCount { get; set; }
+        public long WatchedCount { get; set; }
+        public long StoppedCount { get; set; }
     }
 }

@@ -40,7 +40,7 @@ namespace ShokoCompanion.Services
             }
         }
 
-        public async Task<List<ShokoAnimeEpisode>> GetAllEpisodesWithMultipleFiles(int userID, bool onlyFinishedSeries, bool ignoreVariations)
+        public async Task<List<ShokoAnimeEpisode>> GetAllEpisodesWithMultipleFiles(long userID, bool onlyFinishedSeries, bool ignoreVariations)
         {
             var result = new List<ShokoAnimeEpisode>();
             try
@@ -62,7 +62,7 @@ namespace ShokoCompanion.Services
             return result;
         }
 
-        public async Task<List<ShokoVideoDetailed>> GetFilesByGroupAndResolution(int userID,int animeID)
+        public async Task<List<ShokoVideoDetailed>> GetFilesByGroupAndResolution(long userID,long animeID)
         {
             var result = new List<ShokoVideoDetailed>();
             try
