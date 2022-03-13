@@ -9,13 +9,13 @@ Lil' Shoko Server companion for some niche interactions
 
 ## Remove Duplicates
 [ ] Load Anime Name 
-[ ] Change label: 10 episodes, 20 files, 5 selected
 [ ] Check at least one file per episode must exist always
 [ ] double click cell, select row
 [ ] Change color for selected row
 [ ] Add removed successfuly, reload all after removing
-[ ] bug: reload paints everything yellow
 [ ] Change color to red for selected rows
 [ ] hint: close ShokoDesktop for faster experience
-[ ] add wait 100ms when deleting
+[x] add wait 100ms when deleting
 [x] Add Loading... label 
+[x] Change label: 10 episodes, 20 files, 5 selected
+[x] bug: reload paints everything yellow

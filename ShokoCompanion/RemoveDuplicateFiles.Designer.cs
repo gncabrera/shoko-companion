@@ -147,9 +147,9 @@ namespace ShokoCompanion
             this.totalItemsLbl.AutoSize = true;
             this.totalItemsLbl.Location = new System.Drawing.Point(6, 52);
             this.totalItemsLbl.Name = "totalItemsLbl";
-            this.totalItemsLbl.Size = new System.Drawing.Size(100, 13);
+            this.totalItemsLbl.Size = new System.Drawing.Size(10, 13);
             this.totalItemsLbl.TabIndex = 3;
-            this.totalItemsLbl.Text = "0 items / 0 selected";
+            this.totalItemsLbl.Text = "-";
             // 
             // groupBox1
             // 

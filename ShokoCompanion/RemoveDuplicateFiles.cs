@@ -24,6 +24,7 @@ namespace ShokoCompanion
         {
             InitializeComponent();
             lblProgress.Text = "";
+            totalItemsLbl.Text = "0 episodes / 0 items / 0 selected";
             Episodes = new Dictionary<ShokoAnimeEpisode, List<ShokoVideoDetailed>>();
         }
 
@@ -201,6 +202,8 @@ namespace ShokoCompanion
                 {
                     progressCounter++;
                     UpdateProgressBar($"Removing file {progressCounter}/{selected.Count}", progressCounter * 100 / selected.Count);
+
+                    await Task.Delay(500);
                     await shokoService.DeletePhysicalFile(id);
                     Console.WriteLine(id);
                 }
