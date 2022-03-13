@@ -24,8 +24,25 @@ namespace ShokoCompanion
             InitializeComponent();
         }
 
+        private void LoadingStart()
+        {
+            loadFilesBtn.Enabled = false;
+            toggleSelectedBtn.Enabled = false;
+            removeSelectedBtn.Enabled=false;
+            dataGridView1.Enabled = false;
+        }
+
+        private void LoadingStop()
+        {
+            loadFilesBtn.Enabled = true;
+            toggleSelectedBtn.Enabled = true;
+            removeSelectedBtn.Enabled = true;
+            dataGridView1.Enabled = true;
+        }
+
         private async void loadFilesBtn_Click(object sender, EventArgs e)
         {
+            LoadingStart();
             DataTable dt = new DataTable();
 
             var allVideoDetails = await GetAllVideoDetails();
@@ -71,6 +88,8 @@ namespace ShokoCompanion
             dataGridView1.Columns[ShokoDataGridColumns.FileVersion].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
             dataGridView1.Columns[ShokoDataGridColumns.GroupName].AutoSizeMode = DataGridViewAutoSizeColumnMode.DisplayedCells;
             dataGridView1.Columns[ShokoDataGridColumns.Filename].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+
+            LoadingStop();
 
         }
 
