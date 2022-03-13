@@ -22,6 +22,7 @@ namespace ShokoCompanion
         public RemoveDuplicateFiles()
         {
             InitializeComponent();
+            lblProgress.Text = "";
         }
 
         private void LoadingStart()
@@ -42,9 +43,19 @@ namespace ShokoCompanion
             chkOnlyFinishedSeries.Enabled = true;
         }
 
+        private void UpdateProgressBar(string label, int value)
+        {
+            progressBar1.Value = value;
+            lblProgress.Text = label;
+        }
+
         private async void loadFilesBtn_Click(object sender, EventArgs e)
         {
             LoadingStart();
+
+            dataGridView1.DataSource = null;
+            dataGridView1.Rows.Clear();
+            dataGridView1.Refresh();
             DataTable dt = new DataTable();
 
             var allVideoDetails = await GetAllVideoDetails(chkOnlyFinishedSeries.Checked);
@@ -76,6 +87,7 @@ namespace ShokoCompanion
                 episodeIndex++;
 
             }
+            dataGridView1.AllowUserToAddRows = false;
             dataGridView1.DataSource = dt;
             dataGridView1.Columns[ShokoDataGridColumns.CheckBox].AutoSizeMode = DataGridViewAutoSizeColumnMode.DisplayedCells;
             dataGridView1.Columns[ShokoDataGridColumns.EpisodeIndex].Visible = false;
@@ -91,7 +103,9 @@ namespace ShokoCompanion
             dataGridView1.Columns[ShokoDataGridColumns.GroupName].AutoSizeMode = DataGridViewAutoSizeColumnMode.DisplayedCells;
             dataGridView1.Columns[ShokoDataGridColumns.Filename].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
 
+            UpdateTotalItemsLabel();
             LoadingStop();
+            UpdateProgressBar("Done! Start killing files!", 100);
 
         }
 
@@ -121,17 +135,21 @@ namespace ShokoCompanion
 
         private async Task<Dictionary<ShokoAnimeEpisode, List<ShokoVideoDetailed>>> GetAllVideoDetails(bool onlyFinishedSeries = true, bool ignoreVariations = true)
         {
+            var finalProgressPercentage = 99;
+            UpdateProgressBar("Loading Video Duplicated Videos...", 0);
             var result = new Dictionary<ShokoAnimeEpisode, List<ShokoVideoDetailed>>();
 
+            int progressCounter = 0;
             var allEpisodes = await shokoService.GetAllEpisodesWithMultipleFiles(ShokoService.USER_ID, onlyFinishedSeries, ignoreVariations);
             foreach (var episode in allEpisodes)
             {
-                // TODO: Make async
+                progressCounter++;
+                UpdateProgressBar($"Loading Video Details {progressCounter}/{allEpisodes.Count}", progressCounter * finalProgressPercentage / allEpisodes.Count);
                 var videoDetailed = await shokoService.GetFilesByGroupAndResolution(ShokoService.USER_ID, episode.AnimeEpisodeID);
                 result.Add(episode, videoDetailed);
-                //result.Add(episode, new List<ShokoVideoDetailed> { new ShokoVideoDetailed { VideoLocalID = 11, VideoLocal_FileName = "1a" }, new ShokoVideoDetailed { VideoLocalID = 12,  VideoLocal_FileName = "1b" } }); 
             }
-            UpdateTotalItemsLabel();
+            
+            UpdateProgressBar("Wrapping up...", finalProgressPercentage);
 
             return result;
         }

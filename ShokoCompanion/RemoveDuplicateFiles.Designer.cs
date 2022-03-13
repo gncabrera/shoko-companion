@@ -40,10 +40,14 @@ namespace ShokoCompanion
             this.totalItemsLbl = new System.Windows.Forms.Label();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.chkOnlyFinishedSeries = new System.Windows.Forms.CheckBox();
+            this.progressBar1 = new System.Windows.Forms.ProgressBar();
+            this.groupBox3 = new System.Windows.Forms.GroupBox();
+            this.lblProgress = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             this.panel1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.groupBox1.SuspendLayout();
+            this.groupBox3.SuspendLayout();
             this.SuspendLayout();
             // 
             // loadFilesBtn
@@ -81,6 +85,7 @@ namespace ShokoCompanion
             // 
             // panel1
             // 
+            this.panel1.Controls.Add(this.groupBox3);
             this.panel1.Controls.Add(this.groupBox2);
             this.panel1.Controls.Add(this.groupBox1);
             this.panel1.Dock = System.Windows.Forms.DockStyle.Top;
@@ -143,6 +148,33 @@ namespace ShokoCompanion
             this.chkOnlyFinishedSeries.Text = "Only finished series";
             this.chkOnlyFinishedSeries.UseVisualStyleBackColor = true;
             // 
+            // progressBar1
+            // 
+            this.progressBar1.Location = new System.Drawing.Point(6, 22);
+            this.progressBar1.Name = "progressBar1";
+            this.progressBar1.Size = new System.Drawing.Size(237, 23);
+            this.progressBar1.TabIndex = 6;
+            // 
+            // groupBox3
+            // 
+            this.groupBox3.Controls.Add(this.lblProgress);
+            this.groupBox3.Controls.Add(this.progressBar1);
+            this.groupBox3.Location = new System.Drawing.Point(465, 4);
+            this.groupBox3.Name = "groupBox3";
+            this.groupBox3.Size = new System.Drawing.Size(249, 77);
+            this.groupBox3.TabIndex = 6;
+            this.groupBox3.TabStop = false;
+            this.groupBox3.Text = "Progress";
+            // 
+            // lblProgress
+            // 
+            this.lblProgress.AutoSize = true;
+            this.lblProgress.Location = new System.Drawing.Point(7, 51);
+            this.lblProgress.Name = "lblProgress";
+            this.lblProgress.Size = new System.Drawing.Size(10, 13);
+            this.lblProgress.TabIndex = 7;
+            this.lblProgress.Text = "-";
+            // 
             // RemoveDuplicateFiles
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -158,6 +190,8 @@ namespace ShokoCompanion
             this.groupBox2.PerformLayout();
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
+            this.groupBox3.ResumeLayout(false);
+            this.groupBox3.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -175,5 +209,8 @@ namespace ShokoCompanion
         private GroupBox groupBox1;
         private CheckBox chkOnlyFinishedSeries;
         private GroupBox groupBox2;
+        private GroupBox groupBox3;
+        private ProgressBar progressBar1;
+        private Label lblProgress;
     }
 }
