@@ -17,7 +17,7 @@ namespace ShokoCompanion.Services
         private static ShokoService instance = null;
         private static readonly object padlock = new object();
         private static readonly HttpClient httpClient = new HttpClient();
-        private static string BASE_URL = "http://192.168.0.22:8111";
+        private static string BASE_URL = "http://192.168.0.153:8111";
 
         public static int USER_ID { get { return 1; } }
 

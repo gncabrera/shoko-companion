@@ -8,6 +8,9 @@ Lil' Shoko Server companion for some niche interactions
 [ ] Create a general log view 
 
 ## Remove Duplicates
+[ ] How to setup development
+[ ] Edit easily Shoko Server URL
+[ ] Add Jenkins compiler
 [ ] Load Anime Name 
 [x] Check at least one file per episode must exist always
 [x] hint: close ShokoDesktop for faster experience
